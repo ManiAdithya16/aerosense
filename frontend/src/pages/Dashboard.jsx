@@ -651,8 +651,9 @@ export default function Dashboard() {
                     flight_conditions: flightConditions ?? {} };
       const res = await api.post('/chat', { query: q, context: ctx });
       setMessages(prev => [...prev, { role: 'ai', content: res.data.response, followups: res.data.followups || [] }]);
-    } catch {
-      setMessages(prev => [...prev, { role: 'ai', content: 'Communication error with AEROSENSE mainframe.', followups: [] }]);
+    } catch (err) {
+      const detail = err?.response?.data?.detail || err?.message || 'Communication error with AEROSENSE mainframe.';
+      setMessages(prev => [...prev, { role: 'ai', content: `⚠️ ${detail}`, followups: [] }]);
     } finally {
       setChatBusy(false);
     }

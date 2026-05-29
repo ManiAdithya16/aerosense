@@ -879,14 +879,14 @@ async def call_gemini(sys_inst, prompt):
                 contents=prompt,
                 config=genai_types.GenerateContentConfig(
                     system_instruction=sys_inst,
-                    max_output_tokens=1024,
+                    max_output_tokens=2048,
                     temperature=0.2))
             return r.text
         return await asyncio.to_thread(_call)
     def _legacy():
         return llm_model_legacy.generate_content(
             sys_inst + "\n\n" + prompt,
-            generation_config={"temperature": 0.2, "max_output_tokens": 1024}
+            generation_config={"temperature": 0.2, "max_output_tokens": 2048}
         ).text
     return await asyncio.to_thread(_legacy)
 
