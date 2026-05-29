@@ -43,12 +43,12 @@ except ImportError:
 # ── GEMINI ────────────────────────────────────────────────────────────────────
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyDfc_QuBiBKBzDrhTQ_72Oeb213_M2WFq8")
 try:
-    import google.generativeai as genai_legacy
-    genai_legacy.configure(api_key=GEMINI_API_KEY)
-    llm_model_legacy = genai_legacy.GenerativeModel('gemini-1.5-flash')
-    USE_NEW_GENAI = False
-    gemini_client = None
-    print("Gemini initialized (gemini-1.5-flash).")
+    from google import genai as google_genai
+    from google.genai import types as genai_types
+    gemini_client = google_genai.Client(api_key=GEMINI_API_KEY)
+    GEMINI_MODEL = "gemini-2.5-flash"
+    USE_NEW_GENAI = True
+    print("Gemini initialized (gemini-2.5-flash).")
 except Exception as e:
     print(f"Gemini init error: {e}")
     USE_NEW_GENAI = False
