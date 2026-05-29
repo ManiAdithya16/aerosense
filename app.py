@@ -41,19 +41,16 @@ except ImportError:
     print("google-auth not installed. Run: pip install google-auth")
 
 # ── GEMINI ────────────────────────────────────────────────────────────────────
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyDfc_QuBiBKBzDrhTQ_72Oeb213_M2WFq8")
 try:
-    from google import genai as google_genai
-    from google.genai import types as genai_types
-    GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyDfc_QuBiBKBzDrhTQ_72Oeb213_M2WFq8")
-    gemini_client = google_genai.Client(api_key=GEMINI_API_KEY)
-    GEMINI_MODEL = "gemini-2.0-flash-lite"
-    USE_NEW_GENAI = True
-    print("Gemini initialized.")
-except Exception as e:
-    print(f"Gemini fallback: {e}")
     import google.generativeai as genai_legacy
-    genai_legacy.configure(api_key=os.environ.get("GEMINI_API_KEY", "AIzaSyDfc_QuBiBKBzDrhTQ_72Oeb213_M2WFq8"))
-    llm_model_legacy = genai_legacy.GenerativeModel('gemini-2.0-flash-lite')
+    genai_legacy.configure(api_key=GEMINI_API_KEY)
+    llm_model_legacy = genai_legacy.GenerativeModel('gemini-1.5-flash')
+    USE_NEW_GENAI = False
+    gemini_client = None
+    print("Gemini initialized (gemini-1.5-flash).")
+except Exception as e:
+    print(f"Gemini init error: {e}")
     USE_NEW_GENAI = False
     gemini_client = None
 
