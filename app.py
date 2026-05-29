@@ -46,7 +46,7 @@ try:
     from google import genai as google_genai
     from google.genai import types as genai_types
     gemini_client = google_genai.Client(api_key=GEMINI_API_KEY)
-    GEMINI_MODEL = "gemini-2.5-flash"
+    GEMINI_MODEL = "gemini-2.5-flash-lite"
     USE_NEW_GENAI = True
     print("Gemini initialized (gemini-2.5-flash).")
 except Exception as e:
