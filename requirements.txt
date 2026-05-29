@@ -1,18 +1,28 @@
-fastapi
-uvicorn
-pandas
-numpy
-scikit-learn
-xgboost
+fastapi==0.136.1
+uvicorn==0.46.0
+python-multipart==0.0.28
+
+# Data / ML
+pandas==2.3.3
+numpy==2.2.6
+scikit-learn==1.7.2
+xgboost==2.1.4
 lightgbm
-shap
-google-generativeai
-google-genai
-google-auth
-bcrypt
-python-multipart
-websockets
-joblib
-python-jose[cryptography]
-passlib[bcrypt]
-matplotlib
+joblib==1.5.3
+shap==0.46.0
+scipy==1.15.3
+matplotlib==3.10.9
+
+# Auth
+bcrypt==5.0.0
+python-jose[cryptography]==3.5.0
+passlib[bcrypt]==1.7.4
+google-auth==2.52.0
+
+# Gemini AI
+google-genai==2.2.0
+google-generativeai==0.8.6
+
+# WebSocket + HTTP
+websockets==16.0
+httpx==0.28.1

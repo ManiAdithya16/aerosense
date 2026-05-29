@@ -14,7 +14,7 @@ from typing import Dict, List, Optional
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, UploadFile, File, HTTPException, Depends, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse, JSONResponse
+from fastapi.responses import RedirectResponse, JSONResponse, FileResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import bcrypt as _bcrypt
 from pydantic import BaseModel
@@ -30,7 +30,7 @@ database.seed_admin()
 # Steps: console.cloud.google.com → APIs & Services → Credentials
 #        → Create OAuth 2.0 Client ID → Web application
 #        → Authorized JS origins: http://localhost:5173
-GOOGLE_CLIENT_ID = "196141075698-9mhu769ccg5uj3qpfdpusjs0m4sjs4hk.apps.googleusercontent.com"
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "196141075698-9mhu769ccg5uj3qpfdpusjs0m4sjs4hk.apps.googleusercontent.com")
 
 try:
     from google.oauth2 import id_token as _google_id_token
@@ -44,7 +44,7 @@ except ImportError:
 try:
     from google import genai as google_genai
     from google.genai import types as genai_types
-    GEMINI_API_KEY = "AIzaSyDfc_QuBiBKBzDrhTQ_72Oeb213_M2WFq8"
+    GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyDfc_QuBiBKBzDrhTQ_72Oeb213_M2WFq8")
     gemini_client = google_genai.Client(api_key=GEMINI_API_KEY)
     GEMINI_MODEL = "gemini-2.5-flash"
     USE_NEW_GENAI = True
@@ -52,13 +52,13 @@ try:
 except Exception as e:
     print(f"Gemini fallback: {e}")
     import google.generativeai as genai_legacy
-    genai_legacy.configure(api_key="AIzaSyDfc_QuBiBKBzDrhTQ_72Oeb213_M2WFq8")
+    genai_legacy.configure(api_key=os.environ.get("GEMINI_API_KEY", "AIzaSyDfc_QuBiBKBzDrhTQ_72Oeb213_M2WFq8"))
     llm_model_legacy = genai_legacy.GenerativeModel('gemini-2.5-flash')
     USE_NEW_GENAI = False
     gemini_client = None
 
 # ── JWT ───────────────────────────────────────────────────────────────────────
-SECRET_KEY = "nasa-aerosense-super-secret-key-change-in-prod"
+SECRET_KEY = os.environ.get("JWT_SECRET", "nasa-aerosense-super-secret-key-change-in-prod")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_HOURS = 24
 bearer_scheme = HTTPBearer(auto_error=False)
@@ -68,8 +68,17 @@ app = FastAPI(title="AEROSENSE")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 app.mount("/static", StaticFiles(directory="static", html=True), name="static")
 
+_FRONTEND_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frontend", "dist")
+_SERVE_REACT = os.path.isdir(_FRONTEND_DIR)
+if _SERVE_REACT:
+    _assets_dir = os.path.join(_FRONTEND_DIR, "assets")
+    if os.path.isdir(_assets_dir):
+        app.mount("/assets", StaticFiles(directory=_assets_dir), name="vite-assets")
+
 @app.get("/")
 async def root():
+    if _SERVE_REACT:
+        return FileResponse(os.path.join(_FRONTEND_DIR, "index.html"))
     return RedirectResponse(url="/static/login.html")
 
 # ── ML MODEL ──────────────────────────────────────────────────────────────────
@@ -1198,6 +1207,11 @@ async def shap_status():
     return {"model_loaded":model is not None,"scaler_loaded":scaler is not None,
             "shap_available":explainer is not None,
             "message":"SHAP ready." if explainer else "SHAP not available."}
+
+if _SERVE_REACT:
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_spa(full_path: str):
+        return FileResponse(os.path.join(_FRONTEND_DIR, "index.html"))
 
 if __name__ == "__main__":
     import uvicorn

@@ -6,16 +6,24 @@ __pycache__/
 venv/
 .venv/
 
-# ML model binaries & data
-*.pkl
-*.ubj
+# ML model binaries — large files NOT needed at runtime (keep out of git)
+rf_model.pkl
+ensemble_model.pkl
+best_rul_model.pkl
+lgbm_model.pkl
+gbr_model.pkl
+xgb_model.pkl
+best_rul_model_v2.ubj
+# scaler.pkl and best_rul_model.ubj ARE tracked (tiny / 2 MB — required at runtime)
+
+# Database
 *.db
+
+# Notebooks
 *.ipynb
 
-# Large media / test data
+# Large media
 *.mp4
-train_FD001.txt
-test_engine_data.txt
 
 # Zone identifier files (Windows)
 *Zone.Identifier
