@@ -3,11 +3,11 @@ import { Thermometer, RefreshCw, Wifi, WifiOff, AlertTriangle, Activity, Info } 
 import api from '../services/api';
 
 const STATUS = {
-  CRITICAL: { bg:'#fef2f2', text:'#dc2626', border:'#fca5a5', dot:'#dc2626', label:'Critical'  },
-  HIGH:     { bg:'#fff7ed', text:'#ea580c', border:'#fdba74', dot:'#ea580c', label:'High'      },
-  ELEVATED: { bg:'#fefce8', text:'#ca8a04', border:'#fde047', dot:'#ca8a04', label:'Elevated'  },
-  NORMAL:   { bg:'#f0fdf4', text:'#16a34a', border:'#86efac', dot:'#16a34a', label:'Normal'    },
-  UNKNOWN:  { bg:'#f8fafc', text:'#94a3b8', border:'#e2e8f0', dot:'#94a3b8', label:'N/A'       },
+  CRITICAL: { bg:'rgba(220,38,38,0.13)',  text:'#dc2626', border:'rgba(220,38,38,0.35)',  dot:'#dc2626', label:'Critical'  },
+  HIGH:     { bg:'rgba(234,88,12,0.13)',  text:'#ea580c', border:'rgba(234,88,12,0.35)',  dot:'#ea580c', label:'High'      },
+  ELEVATED: { bg:'rgba(202,138,4,0.12)',  text:'#ca8a04', border:'rgba(202,138,4,0.35)',  dot:'#ca8a04', label:'Elevated'  },
+  NORMAL:   { bg:'rgba(22,163,74,0.11)',  text:'#16a34a', border:'rgba(22,163,74,0.35)',  dot:'#16a34a', label:'Normal'    },
+  UNKNOWN:  { bg:'rgba(148,163,184,0.08)',text:'#94a3b8', border:'rgba(148,163,184,0.25)',dot:'#94a3b8', label:'N/A'       },
 };
 
 const ALERT_TAG = {
@@ -23,13 +23,13 @@ function HoverCard({ cell }) {
   const { anomaly, engineId, sensor } = cell;
   const st = STATUS[anomaly.status] || STATUS.UNKNOWN;
   return (
-    <div className="fixed bottom-6 right-6 z-50 bg-white border-2 rounded-2xl shadow-2xl p-4 w-64 pointer-events-none"
-         style={{ borderColor: st.border }}>
+    <div className="fixed bottom-6 right-6 z-50 border-2 rounded-2xl shadow-2xl p-4 w-64 pointer-events-none"
+         style={{ backgroundColor: 'var(--color-card)', borderColor: st.border }}>
       <div className="flex items-center gap-2 mb-3">
         <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: st.dot }}/>
-        <span className="font-black text-sm text-slate-800">{engineId} · {sensor}</span>
+        <span className="font-black text-sm" style={{ color: 'var(--color-text)' }}>{engineId} · {sensor}</span>
       </div>
-      <p className="text-xs text-slate-500 mb-3 leading-snug">{anomaly.label}</p>
+      <p className="text-xs mb-3 leading-snug" style={{ color: 'var(--color-muted)' }}>{anomaly.label}</p>
       <div className="space-y-1.5 text-xs">
         {[
           ['Measured',  `${anomaly.value} ${anomaly.unit}`],
@@ -38,17 +38,17 @@ function HoverCard({ cell }) {
           ['Status',    anomaly.status],
         ].map(([k, v]) => (
           <div key={k} className="flex justify-between">
-            <span className="text-slate-400">{k}</span>
-            <span className="font-bold font-mono" style={{ color: k === 'Status' ? st.text : '#0f172a' }}>{v}</span>
+            <span style={{ color: 'var(--color-muted)' }}>{k}</span>
+            <span className="font-bold font-mono" style={{ color: k === 'Status' ? st.text : 'var(--color-text)' }}>{v}</span>
           </div>
         ))}
       </div>
-      <div className="mt-3 pt-3 border-t border-slate-100">
-        <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+      <div className="mt-3 pt-3" style={{ borderTop: '1px solid var(--color-border)' }}>
+        <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--color-card2)' }}>
           <div className="h-full rounded-full transition-all"
                style={{ width:`${anomaly.pct_dev}%`, backgroundColor: st.dot }}/>
         </div>
-        <p className="text-[10px] text-slate-400 mt-1">{anomaly.pct_dev.toFixed(0)}% deviation severity</p>
+        <p className="text-[10px] mt-1" style={{ color: 'var(--color-muted)' }}>{anomaly.pct_dev.toFixed(0)}% deviation severity</p>
       </div>
     </div>
   );

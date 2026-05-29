@@ -362,13 +362,16 @@ export default function XGBoostModel() {
                   <h3 className="font-bold text-sm text-text">Stacking Ensemble Architecture</h3>
                 </div>
                 <div className="flex flex-wrap items-center gap-2 text-xs">
-                  {(ensemble.base_learners || []).map(bl => (
-                    <span key={bl}
-                          className="font-mono font-bold px-3 py-1.5 rounded-lg text-white"
-                          style={{ backgroundColor: M_COLOR[Object.keys(M_COLOR).find(k=>k.toLowerCase().includes(bl))] || '#64748b' }}>
-                      {bl.toUpperCase()}
-                    </span>
-                  ))}
+                  {(ensemble.base_learners || []).map(bl => {
+                    const BL_COLOR = { xgb:'#3b82f6', lgbm:'#a855f7', rf:'#22c55e', gbr:'#f97316' };
+                    return (
+                      <span key={bl}
+                            className="font-mono font-bold px-3 py-1.5 rounded-lg text-white"
+                            style={{ backgroundColor: BL_COLOR[bl] || '#64748b' }}>
+                        {bl.toUpperCase()}
+                      </span>
+                    );
+                  })}
                   <span className="text-muted font-bold mx-1">→ {ensemble.stacking_cv_folds}-fold CV →</span>
                   <span className="font-mono font-bold px-3 py-1.5 rounded-lg border border-pink-300
                                    bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300">
