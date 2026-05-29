@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+.venv/
+
+# ML model binaries & data
+*.pkl
+*.ubj
+*.db
+*.ipynb
+
+# Large media / test data
+*.mp4
+train_FD001.txt
+test_engine_data.txt
+
+# Zone identifier files (Windows)
+*Zone.Identifier
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# Misc
+*.log
+.DS_Store
+Thumbs.db

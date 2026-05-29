@@ -1,0 +1,678 @@
+{
+  "models": [
+    {
+      "model": "XGBoost",
+      "rmse": 19.0618,
+      "mae": 14.2688,
+      "r2_score": 0.7445,
+      "nasa_score": 1199.69,
+      "training_time_sec": 1.68
+    },
+    {
+      "model": "LightGBM",
+      "rmse": 19.0711,
+      "mae": 14.475,
+      "r2_score": 0.7443,
+      "nasa_score": 1102.41,
+      "training_time_sec": 0.68
+    },
+    {
+      "model": "RandomForest",
+      "rmse": 19.3176,
+      "mae": 14.5067,
+      "r2_score": 0.7376,
+      "nasa_score": 1198.45,
+      "training_time_sec": 3.67
+    },
+    {
+      "model": "GradientBoosting",
+      "rmse": 19.107,
+      "mae": 14.3744,
+      "r2_score": 0.7433,
+      "nasa_score": 1143.96,
+      "training_time_sec": 31.68
+    },
+    {
+      "model": "StackingEnsemble",
+      "rmse": 19.6338,
+      "mae": 14.7286,
+      "r2_score": 0.729,
+      "nasa_score": 1239.93,
+      "training_time_sec": 48.96
+    }
+  ],
+  "best_model": "XGBoost",
+  "features": [
+    "setting_1",
+    "setting_2",
+    "T24",
+    "T30",
+    "T50",
+    "P15",
+    "P30",
+    "Nf",
+    "Nc",
+    "Ps30",
+    "phi",
+    "NRf",
+    "NRc",
+    "BPR",
+    "htBleed",
+    "W31",
+    "W32"
+  ],
+  "n_features": 17,
+  "rul_ceiling": 125,
+  "test_engines": 100,
+  "training_rows": 20531,
+  "base_learners": [
+    "xgb",
+    "lgbm",
+    "rf",
+    "gbr"
+  ],
+  "meta_learner": "Ridge(alpha=10)",
+  "stacking_cv_folds": 5,
+  "actual_vs_predicted": [
+    {
+      "engine": 1,
+      "actual": 112.0,
+      "predicted": 114.7,
+      "error": 2.7
+    },
+    {
+      "engine": 2,
+      "actual": 98.0,
+      "predicted": 106.0,
+      "error": 8.0
+    },
+    {
+      "engine": 3,
+      "actual": 69.0,
+      "predicted": 91.7,
+      "error": 22.7
+    },
+    {
+      "engine": 4,
+      "actual": 82.0,
+      "predicted": 101.6,
+      "error": 19.6
+    },
+    {
+      "engine": 5,
+      "actual": 91.0,
+      "predicted": 87.4,
+      "error": 3.6
+    },
+    {
+      "engine": 6,
+      "actual": 93.0,
+      "predicted": 105.3,
+      "error": 12.3
+    },
+    {
+      "engine": 7,
+      "actual": 91.0,
+      "predicted": 91.2,
+      "error": 0.2
+    },
+    {
+      "engine": 8,
+      "actual": 95.0,
+      "predicted": 104.4,
+      "error": 9.4
+    },
+    {
+      "engine": 9,
+      "actual": 111.0,
+      "predicted": 120.6,
+      "error": 9.6
+    },
+    {
+      "engine": 10,
+      "actual": 96.0,
+      "predicted": 114.7,
+      "error": 18.7
+    },
+    {
+      "engine": 11,
+      "actual": 97.0,
+      "predicted": 101.5,
+      "error": 4.5
+    },
+    {
+      "engine": 12,
+      "actual": 124.0,
+      "predicted": 115.2,
+      "error": 8.8
+    },
+    {
+      "engine": 13,
+      "actual": 95.0,
+      "predicted": 105.9,
+      "error": 10.9
+    },
+    {
+      "engine": 14,
+      "actual": 107.0,
+      "predicted": 92.7,
+      "error": 14.3
+    },
+    {
+      "engine": 15,
+      "actual": 83.0,
+      "predicted": 113.7,
+      "error": 30.7
+    },
+    {
+      "engine": 16,
+      "actual": 84.0,
+      "predicted": 60.7,
+      "error": 23.3
+    },
+    {
+      "engine": 17,
+      "actual": 50.0,
+      "predicted": 41.5,
+      "error": 8.5
+    },
+    {
+      "engine": 18,
+      "actual": 28.0,
+      "predicted": 34.8,
+      "error": 6.8
+    },
+    {
+      "engine": 19,
+      "actual": 87.0,
+      "predicted": 94.9,
+      "error": 7.9
+    },
+    {
+      "engine": 20,
+      "actual": 16.0,
+      "predicted": 10.1,
+      "error": 5.9
+    },
+    {
+      "engine": 21,
+      "actual": 57.0,
+      "predicted": 82.3,
+      "error": 25.3
+    },
+    {
+      "engine": 22,
+      "actual": 111.0,
+      "predicted": 94.2,
+      "error": 16.8
+    },
+    {
+      "engine": 23,
+      "actual": 113.0,
+      "predicted": 95.2,
+      "error": 17.8
+    },
+    {
+      "engine": 24,
+      "actual": 20.0,
+      "predicted": 29.1,
+      "error": 9.1
+    },
+    {
+      "engine": 25,
+      "actual": 125.0,
+      "predicted": 109.5,
+      "error": 15.5
+    },
+    {
+      "engine": 26,
+      "actual": 119.0,
+      "predicted": 89.4,
+      "error": 29.6
+    },
+    {
+      "engine": 27,
+      "actual": 66.0,
+      "predicted": 80.2,
+      "error": 14.2
+    },
+    {
+      "engine": 28,
+      "actual": 97.0,
+      "predicted": 123.9,
+      "error": 26.9
+    },
+    {
+      "engine": 29,
+      "actual": 90.0,
+      "predicted": 103.9,
+      "error": 13.9
+    },
+    {
+      "engine": 30,
+      "actual": 115.0,
+      "predicted": 120.5,
+      "error": 5.5
+    },
+    {
+      "engine": 31,
+      "actual": 8.0,
+      "predicted": 8.3,
+      "error": 0.3
+    },
+    {
+      "engine": 32,
+      "actual": 48.0,
+      "predicted": 40.0,
+      "error": 8.0
+    },
+    {
+      "engine": 33,
+      "actual": 106.0,
+      "predicted": 117.8,
+      "error": 11.8
+    },
+    {
+      "engine": 34,
+      "actual": 7.0,
+      "predicted": 5.3,
+      "error": 1.7
+    },
+    {
+      "engine": 35,
+      "actual": 11.0,
+      "predicted": 18.3,
+      "error": 7.3
+    },
+    {
+      "engine": 36,
+      "actual": 19.0,
+      "predicted": 33.4,
+      "error": 14.4
+    },
+    {
+      "engine": 37,
+      "actual": 21.0,
+      "predicted": 21.5,
+      "error": 0.5
+    },
+    {
+      "engine": 38,
+      "actual": 50.0,
+      "predicted": 62.2,
+      "error": 12.2
+    },
+    {
+      "engine": 39,
+      "actual": 125.0,
+      "predicted": 110.8,
+      "error": 14.2
+    },
+    {
+      "engine": 40,
+      "actual": 28.0,
+      "predicted": 19.3,
+      "error": 8.7
+    },
+    {
+      "engine": 41,
+      "actual": 18.0,
+      "predicted": 21.9,
+      "error": 3.9
+    },
+    {
+      "engine": 42,
+      "actual": 10.0,
+      "predicted": 13.7,
+      "error": 3.7
+    },
+    {
+      "engine": 43,
+      "actual": 59.0,
+      "predicted": 115.1,
+      "error": 56.1
+    },
+    {
+      "engine": 44,
+      "actual": 109.0,
+      "predicted": 121.1,
+      "error": 12.1
+    },
+    {
+      "engine": 45,
+      "actual": 114.0,
+      "predicted": 118.0,
+      "error": 4.0
+    },
+    {
+      "engine": 46,
+      "actual": 47.0,
+      "predicted": 94.7,
+      "error": 47.7
+    },
+    {
+      "engine": 47,
+      "actual": 125.0,
+      "predicted": 120.4,
+      "error": 4.6
+    },
+    {
+      "engine": 48,
+      "actual": 92.0,
+      "predicted": 95.7,
+      "error": 3.7
+    },
+    {
+      "engine": 49,
+      "actual": 21.0,
+      "predicted": 15.1,
+      "error": 5.9
+    },
+    {
+      "engine": 50,
+      "actual": 79.0,
+      "predicted": 75.5,
+      "error": 3.5
+    },
+    {
+      "engine": 51,
+      "actual": 114.0,
+      "predicted": 104.9,
+      "error": 9.1
+    },
+    {
+      "engine": 52,
+      "actual": 125.0,
+      "predicted": 114.7,
+      "error": 10.3
+    },
+    {
+      "engine": 53,
+      "actual": 75.0,
+      "predicted": 92.5,
+      "error": 17.5
+    },
+    {
+      "engine": 54,
+      "actual": 96.0,
+      "predicted": 90.2,
+      "error": 5.8
+    },
+    {
+      "engine": 55,
+      "actual": 67.0,
+      "predicted": 79.5,
+      "error": 12.5
+    },
+    {
+      "engine": 56,
+      "actual": 91.0,
+      "predicted": 63.3,
+      "error": 27.7
+    },
+    {
+      "engine": 57,
+      "actual": 32.0,
+      "predicted": 70.1,
+      "error": 38.1
+    },
+    {
+      "engine": 58,
+      "actual": 92.0,
+      "predicted": 113.6,
+      "error": 21.6
+    },
+    {
+      "engine": 59,
+      "actual": 64.0,
+      "predicted": 111.3,
+      "error": 47.3
+    },
+    {
+      "engine": 60,
+      "actual": 89.0,
+      "predicted": 105.1,
+      "error": 16.1
+    },
+    {
+      "engine": 61,
+      "actual": 119.0,
+      "predicted": 124.3,
+      "error": 5.3
+    },
+    {
+      "engine": 62,
+      "actual": 23.0,
+      "predicted": 25.4,
+      "error": 2.4
+    },
+    {
+      "engine": 63,
+      "actual": 73.0,
+      "predicted": 102.5,
+      "error": 29.5
+    },
+    {
+      "engine": 64,
+      "actual": 16.0,
+      "predicted": 10.6,
+      "error": 5.4
+    },
+    {
+      "engine": 65,
+      "actual": 71.0,
+      "predicted": 112.6,
+      "error": 41.6
+    },
+    {
+      "engine": 66,
+      "actual": 117.0,
+      "predicted": 101.3,
+      "error": 15.7
+    },
+    {
+      "engine": 67,
+      "actual": 16.0,
+      "predicted": 5.6,
+      "error": 10.4
+    },
+    {
+      "engine": 68,
+      "actual": 24.0,
+      "predicted": 20.8,
+      "error": 3.2
+    },
+    {
+      "engine": 69,
+      "actual": 21.0,
+      "predicted": 13.0,
+      "error": 8.0
+    },
+    {
+      "engine": 70,
+      "actual": 125.0,
+      "predicted": 116.9,
+      "error": 8.1
+    },
+    {
+      "engine": 71,
+      "actual": 39.0,
+      "predicted": 49.8,
+      "error": 10.8
+    },
+    {
+      "engine": 72,
+      "actual": 75.0,
+      "predicted": 112.3,
+      "error": 37.3
+    },
+    {
+      "engine": 73,
+      "actual": 33.0,
+      "predicted": 19.0,
+      "error": 14.0
+    },
+    {
+      "engine": 74,
+      "actual": 33.0,
+      "predicted": 73.9,
+      "error": 40.9
+    },
+    {
+      "engine": 75,
+      "actual": 33.0,
+      "predicted": 24.9,
+      "error": 8.1
+    },
+    {
+      "engine": 76,
+      "actual": 78.0,
+      "predicted": 51.2,
+      "error": 26.8
+    },
+    {
+      "engine": 77,
+      "actual": 28.0,
+      "predicted": 45.3,
+      "error": 17.3
+    },
+    {
+      "engine": 78,
+      "actual": 53.0,
+      "predicted": 97.7,
+      "error": 44.7
+    },
+    {
+      "engine": 79,
+      "actual": 84.0,
+      "predicted": 113.8,
+      "error": 29.8
+    },
+    {
+      "engine": 80,
+      "actual": 122.0,
+      "predicted": 99.6,
+      "error": 22.4
+    },
+    {
+      "engine": 81,
+      "actual": 53.0,
+      "predicted": 53.9,
+      "error": 0.9
+    },
+    {
+      "engine": 82,
+      "actual": 80.0,
+      "predicted": 78.4,
+      "error": 1.6
+    },
+    {
+      "engine": 83,
+      "actual": 12.0,
+      "predicted": 8.2,
+      "error": 3.8
+    },
+    {
+      "engine": 84,
+      "actual": 51.0,
+      "predicted": 35.3,
+      "error": 15.7
+    },
+    {
+      "engine": 85,
+      "actual": 53.0,
+      "predicted": 93.4,
+      "error": 40.4
+    },
+    {
+      "engine": 86,
+      "actual": 18.0,
+      "predicted": 16.8,
+      "error": 1.2
+    },
+    {
+      "engine": 87,
+      "actual": 125.0,
+      "predicted": 107.6,
+      "error": 17.4
+    },
+    {
+      "engine": 88,
+      "actual": 32.0,
+      "predicted": 30.0,
+      "error": 2.0
+    },
+    {
+      "engine": 89,
+      "actual": 41.0,
+      "predicted": 76.3,
+      "error": 35.3
+    },
+    {
+      "engine": 90,
+      "actual": 121.0,
+      "predicted": 119.5,
+      "error": 1.5
+    },
+    {
+      "engine": 91,
+      "actual": 21.0,
+      "predicted": 19.0,
+      "error": 2.0
+    },
+    {
+      "engine": 92,
+      "actual": 87.0,
+      "predicted": 49.5,
+      "error": 37.5
+    },
+    {
+      "engine": 93,
+      "actual": 23.0,
+      "predicted": 47.6,
+      "error": 24.6
+    },
+    {
+      "engine": 94,
+      "actual": 86.0,
+      "predicted": 77.9,
+      "error": 8.1
+    },
+    {
+      "engine": 95,
+      "actual": 27.0,
+      "predicted": 30.1,
+      "error": 3.1
+    },
+    {
+      "engine": 96,
+      "actual": 16.0,
+      "predicted": 10.6,
+      "error": 5.4
+    },
+    {
+      "engine": 97,
+      "actual": 23.0,
+      "predicted": 27.7,
+      "error": 4.7
+    },
+    {
+      "engine": 98,
+      "actual": 51.0,
+      "predicted": 96.5,
+      "error": 45.5
+    },
+    {
+      "engine": 99,
+      "actual": 22.0,
+      "predicted": 28.4,
+      "error": 6.4
+    },
+    {
+      "engine": 100,
+      "actual": 31.0,
+      "predicted": 31.8,
+      "error": 0.8
+    }
+  ]
+}

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHAP Visualizations – AEROSENSE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:      #020818;
+            --card:    #0f172a;
+            --card2:   #1e293b;
+            --border:  #334155;
+            --text:    #f1f5f9;
+            --muted:   #94a3b8;
+            --accent:  #3b82f6;
+            --success: #22c55e;
+            --warning: #eab308;
+            --danger:  #ef4444;
+            --purple:  #8b5cf6;
+            --header-bg: rgba(2, 8, 24, 0.92);
+            --grid-line: rgba(59,130,246,0.03);
+            --hero-grad: linear-gradient(135deg, #f1f5f9, #60a5fa, #a78bfa);
+            --badge-bg: rgba(59,130,246,0.1);
+            --badge-border: rgba(59,130,246,0.25);
+            --badge-color: #60a5fa;
+            --skeleton-from: #1e293b;
+            --skeleton-mid: #263045;
+        }
+
+        [data-theme="light"] {
+            --bg:      #f1f5f9;
+            --card:    #ffffff;
+            --card2:   #f8fafc;
+            --border:  #cbd5e1;
+            --text:    #0f172a;
+            --muted:   #475569;
+            --accent:  #2563eb;
+            --success: #16a34a;
+            --warning: #ca8a04;
+            --danger:  #dc2626;
+            --purple:  #7c3aed;
+            --header-bg: rgba(241, 245, 249, 0.92);
+            --grid-line: rgba(59,130,246,0.015);
+            --hero-grad: linear-gradient(135deg, #0f172a, #2563eb, #7c3aed);
+            --badge-bg: rgba(59,130,246,0.08);
+            --badge-border: rgba(59,130,246,0.2);
+            --badge-color: #2563eb;
+            --skeleton-from: #e2e8f0;
+            --skeleton-mid: #f1f5f9;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background 0.35s ease, color 0.35s ease;
+        }
+
+        /* Grid overlay */
+        body::before {
+            content: '';
+            position: fixed; inset: 0; pointer-events: none; z-index: 0;
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+
+        /* ── Header ── */
+        .page-header {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--header-bg);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 32px;
+            display: flex; align-items: center; justify-content: space-between;
+            height: 60px;
+            transition: background 0.35s ease, border-color 0.35s ease;
+        }
+        .header-brand { font-size: 18px; font-weight: 700; }
+        .header-brand span { color: var(--accent); }
+        .header-nav { display: flex; gap: 12px; align-items: center; }
+        .btn-nav {
+            padding: 7px 16px;
+            border-radius: 8px; border: 1px solid var(--border);
+            background: none; color: var(--muted);
+            font-family: inherit; font-size: 13px; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-nav:hover { background: var(--card2); color: var(--text); border-color: var(--accent); }
+        .btn-logout {
+            padding: 7px 16px;
+            border-radius: 8px; border: 1px solid rgba(239,68,68,0.3);
+            background: rgba(239,68,68,0.08); color: #f87171;
+            font-family: inherit; font-size: 13px; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover { background: rgba(239,68,68,0.18); }
+
+        /* ── Hero ── */
+        .hero {
+            position: relative; z-index: 1;
+            text-align: center;
+            padding: 52px 24px 36px;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--badge-bg); border: 1px solid var(--badge-border);
+            border-radius: 100px; padding: 5px 16px;
+            font-size: 12px; color: var(--badge-color); letter-spacing: 0.5px;
+            text-transform: uppercase; font-weight: 600;
+            margin-bottom: 18px;
+        }
+        .hero h1 {
+            font-size: 36px; font-weight: 700; letter-spacing: -0.5px;
+            background: var(--hero-grad);
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+
+            margin-bottom: 12px;
+        }
+        .hero p { color: var(--muted); font-size: 15px; max-width: 580px; margin: 0 auto 28px; line-height: 1.65; }
+
+        /* Reload button */
+        .btn-reload {
+            padding: 10px 28px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            border: none; border-radius: 10px; color: white;
+            font-family: inherit; font-size: 14px; font-weight: 600;
+            cursor: pointer; transition: opacity 0.2s, transform 0.15s;
+            box-shadow: 0 4px 20px rgba(59,130,246,0.3);
+        }
+        .btn-reload:hover { opacity: 0.88; transform: translateY(-1px); }
+        .btn-reload:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+        /* ── Plots Grid ── */
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 24px 60px; position: relative; z-index: 1; }
+
+        .section-title {
+            font-size: 11px; font-weight: 600; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 1.2px;
+            margin: 40px 0 16px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .section-title::after {
+            content: ''; flex: 1; height: 1px; background: var(--border);
+        }
+
+        .plots-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+        .plots-grid.single { grid-template-columns: 1fr; }
+
+        .plot-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.35s ease;
+        }
+        .plot-card:hover {
+            border-color: rgba(59,130,246,0.35);
+            box-shadow: 0 0 32px rgba(59,130,246,0.07);
+        }
+
+        .plot-header {
+            padding: 18px 22px 14px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+        }
+        .plot-title { font-size: 15px; font-weight: 600; color: var(--text); }
+        .plot-subtitle { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+        .plot-badge {
+            flex-shrink: 0;
+            font-size: 10px; font-weight: 700; letter-spacing: 0.6px;
+            text-transform: uppercase; padding: 4px 10px; border-radius: 6px;
+            background: var(--badge-bg); color: var(--badge-color);
+            border: 1px solid var(--badge-border);
+        }
+        .plot-badge.global { background: rgba(139,92,246,0.12); color: #a78bfa; border-color: rgba(139,92,246,0.25); }
+        .plot-badge.local  { background: rgba(34,197,94,0.12);  color: #4ade80; border-color: rgba(34,197,94,0.25); }
+
+        .plot-body { padding: 18px; }
+        .plot-img {
+            width: 100%; border-radius: 8px;
+            display: block; transition: opacity 0.3s;
+        }
+
+        /* Skeleton loader */
+        .plot-skeleton {
+            width: 100%; border-radius: 8px;
+            aspect-ratio: 16 / 9;
+            background: linear-gradient(90deg, var(--skeleton-from) 25%, var(--skeleton-mid) 50%, var(--skeleton-from) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+        }
+        @keyframes shimmer {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .plot-error {
+            padding: 32px; text-align: center;
+            color: var(--danger); font-size: 13px;
+            background: rgba(239,68,68,0.06); border-radius: 8px;
+        }
+
+        /* ── Dependence controls ── */
+        .dep-controls {
+            display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+            padding: 14px 22px;
+            background: var(--card2);
+            border-bottom: 1px solid var(--border);
+        }
+        .dep-controls label { font-size: 12px; color: var(--muted); font-weight: 500; }
+        .dep-controls select {
+            background: var(--card); border: 1px solid var(--border);
+            color: var(--text); padding: 7px 12px; border-radius: 8px;
+            font-family: inherit; font-size: 13px; outline: none; cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .dep-controls select:focus { border-color: var(--accent); }
+        .btn-dep {
+            padding: 7px 18px;
+            background: var(--accent); border: none; border-radius: 8px;
+            color: white; font-family: inherit; font-size: 13px; font-weight: 600;
+            cursor: pointer; transition: opacity 0.2s;
+        }
+        .btn-dep:hover { opacity: 0.85; }
+        .dep-interaction {
+            margin-left: auto; font-size: 12px; color: var(--muted); font-style: italic;
+        }
+
+        /* ── Status bar ── */
+        #status-bar {
+            text-align: center; font-size: 13px;
+            color: var(--muted); padding: 12px;
+            min-height: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .plots-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 26px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="page-header">
+    <div class="header-brand">🚀 AERO<span>SENSE</span></div>
+    <nav class="header-nav">
+        <button class="btn-nav" onclick="window.location.href='index.html'">← Dashboard</button>
+        <button class="btn-logout" onclick="logout()">⏻ Logout</button>
+    </nav>
+</header>
+
+<!-- Hero -->
+<div class="hero">
+    <div class="hero-badge">🧠 Explainable AI</div>
+    <h1>SHAP Feature Analysis</h1>
+    <p>Understand exactly how each sensor drives the model's Remaining Useful Life predictions — globally and for individual engine cycles.</p>
+    <button class="btn-reload" id="reload-btn" onclick="loadAllPlots()">⚡ Generate All Plots</button>
+    <div id="status-bar">Click "Generate All Plots" to compute SHAP explanations.</div>
+</div>
+
+<div class="container">
+
+    <!-- Global section -->
+    <div class="section-title">Global Explanations — All Engine Samples</div>
+    <div class="plots-grid">
+
+        <!-- Beeswarm -->
+        <div class="plot-card" id="card-beeswarm">
+            <div class="plot-header">
+                <div>
+                    <div class="plot-title">🐝 Beeswarm Summary Plot</div>
+                    <div class="plot-subtitle">Shows how each feature impacts predictions across all samples. Colour = feature value (red = high, green = low).</div>
+                </div>
+                <div class="plot-badge global">Global</div>
+            </div>
+            <div class="plot-body">
+                <div class="plot-skeleton" id="sk-beeswarm"></div>
+                <img class="plot-img" id="img-beeswarm" style="display:none" alt="Beeswarm plot">
+            </div>
+        </div>
+
+        <!-- Bar -->
+        <div class="plot-card" id="card-bar">
+            <div class="plot-header">
+                <div>
+                    <div class="plot-title">📊 Bar Plot</div>
+                    <div class="plot-subtitle">Mean absolute SHAP values ranked by global importance — the clearest single view of which sensors matter most.</div>
+                </div>
+                <div class="plot-badge global">Global</div>
+            </div>
+            <div class="plot-body">
+                <div class="plot-skeleton" id="sk-bar"></div>
+                <img class="plot-img" id="img-bar" style="display:none" alt="Bar plot">
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Individual section -->
+    <div class="section-title">Local Explanations — Single Prediction (Cycle 75)</div>
+    <div class="plots-grid">
+
+        <!-- Force -->
+        <div class="plot-card">
+            <div class="plot-header">
+                <div>
+                    <div class="plot-title">⚡ Force Plot</div>
+                    <div class="plot-subtitle">Shows how the top features push the RUL prediction above (green) or below (red) the baseline — with raw sensor values annotated.</div>
+                </div>
+                <div class="plot-badge local">Local</div>
+            </div>
+            <div class="plot-body">
+                <div class="plot-skeleton" id="sk-force"></div>
+                <img class="plot-img" id="img-force" style="display:none" alt="Force plot">
+            </div>
+        </div>
+
+        <!-- Waterfall -->
+        <div class="plot-card">
+            <div class="plot-header">
+                <div>
+                    <div class="plot-title">💧 Waterfall Plot</div>
+                    <div class="plot-subtitle">Step-by-step breakdown of a single prediction — each bar shows how a feature moves the output from the base value toward the final RUL.</div>
+                </div>
+                <div class="plot-badge local">Local</div>
+            </div>
+            <div class="plot-body">
+                <div class="plot-skeleton" id="sk-waterfall"></div>
+                <img class="plot-img" id="img-waterfall" style="display:none" alt="Waterfall plot">
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Decision -->
+    <div class="section-title">Decision Trace</div>
+    <div class="plots-grid single">
+        <div class="plot-card">
+            <div class="plot-header">
+                <div>
+                    <div class="plot-title">🧭 Decision Plot</div>
+                    <div class="plot-subtitle">Cumulative feature contributions traced from base value to final prediction. Each horizontal step = one feature's contribution; green fill = above baseline, red fill = below.</div>
+                </div>
+                <div class="plot-badge local">Local</div>
+            </div>
+            <div class="plot-body">
+                <div class="plot-skeleton" id="sk-decision"></div>
+                <img class="plot-img" id="img-decision" style="display:none" alt="Decision plot">
+            </div>
+        </div>
+    </div>
+
+    <!-- Dependence -->
+    <div class="section-title">Feature Interaction / Dependence</div>
+    <div class="plots-grid single">
+        <div class="plot-card">
+            <div class="plot-header">
+                <div>
+                    <div class="plot-title">🔗 Dependence Plot</div>
+                    <div class="plot-subtitle">Relationship between a feature's raw sensor value and its SHAP impact on RUL. Colour reveals the best interaction feature detected automatically.</div>
+                </div>
+                <div class="plot-badge">Interactive</div>
+            </div>
+            <!-- Controls -->
+            <div class="dep-controls">
+                <label for="feat-select">Feature:</label>
+                <select id="feat-select">
+                    <option value="setting_1">setting_1</option>
+                    <option value="setting_2">setting_2</option>
+                    <option value="T24">T24</option>
+                    <option value="T30">T30</option>
+                    <option value="T50" selected>T50</option>
+                    <option value="P15">P15</option>
+                    <option value="P30">P30</option>
+                    <option value="Nf">Nf</option>
+                    <option value="Nc">Nc</option>
+                    <option value="Ps30">Ps30</option>
+                    <option value="phi">phi</option>
+                    <option value="NRf">NRf</option>
+                    <option value="NRc">NRc</option>
+                    <option value="BPR">BPR</option>
+                    <option value="htBleed">htBleed</option>
+                    <option value="W31">W31</option>
+                    <option value="W32">W32</option>
+                </select>
+                <button class="btn-dep" onclick="loadDependence()">Update Plot</button>
+                <div class="dep-interaction" id="dep-interaction"></div>
+            </div>
+            <div class="plot-body">
+                <div class="plot-skeleton" id="sk-dependence"></div>
+                <img class="plot-img" id="img-dependence" style="display:none" alt="Dependence plot">
+            </div>
+        </div>
+    </div>
+
+</div><!-- /container -->
+
+<script>
+    // Apply saved theme
+    (function() {
+        const saved = localStorage.getItem('aerosense_theme');
+        if (saved === 'light') document.documentElement.setAttribute('data-theme', 'light');
+    })();
+</script>
+<script src="viz.js"></script>
+</body>
+</html>

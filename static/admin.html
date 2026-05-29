@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel – AEROSENSE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #020818;
+            --sidebar: #0a1120;
+            --sidebar-border: rgba(255,255,255,.06);
+            --card: rgba(15,22,40,.85);
+            --card-border: rgba(255,255,255,.07);
+            --text: #e2e8f0;
+            --muted: #64748b;
+            --label: #94a3b8;
+            --blue: #3b82f6;
+            --gold: #f59e0b;
+            --green: #22c55e;
+            --red: #ef4444;
+            --orange: #f97316;
+            --input-bg: rgba(255,255,255,.05);
+            --input-border: rgba(255,255,255,.1);
+            --divider: rgba(255,255,255,.07);
+            --row-hover: rgba(255,255,255,.04);
+            --header-bg: rgba(2,8,24,.92);
+        }
+        [data-theme="light"] {
+            --bg: #f0f4ff;
+            --sidebar: #ffffff;
+            --sidebar-border: rgba(0,0,0,.08);
+            --card: rgba(255,255,255,.95);
+            --card-border: rgba(0,0,0,.06);
+            --text: #1e293b;
+            --muted: #64748b;
+            --label: #475569;
+            --blue: #2563eb;
+            --gold: #d97706;
+            --green: #16a34a;
+            --red: #dc2626;
+            --orange: #ea580c;
+            --input-bg: #f8fafc;
+            --input-border: #e2e8f0;
+            --divider: rgba(0,0,0,.07);
+            --row-hover: rgba(0,0,0,.025);
+            --header-bg: rgba(240,244,255,.95);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg); color: var(--text);
+            min-height: 100vh; display: flex; flex-direction: column;
+            transition: background .3s, color .3s;
+        }
+
+        /* Top header */
+        .top-bar {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--sidebar-border);
+            backdrop-filter: blur(16px);
+            padding: 14px 28px;
+            display: flex; align-items: center; justify-content: space-between; gap: 16px;
+        }
+        .top-bar-left { display: flex; align-items: center; gap: 14px; }
+        .logo-wrap { display: flex; align-items: center; gap: 9px; }
+        .logo-icon {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg,#f59e0b,#d97706);
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            font-size: 18px; box-shadow: 0 0 14px rgba(245,158,11,.4);
+        }
+        .logo-text { font-size: 18px; font-weight: 800; color: var(--text); letter-spacing: -.4px; }
+        .logo-text span { color: var(--gold); }
+        .admin-badge {
+            background: rgba(245,158,11,.15); border: 1px solid rgba(245,158,11,.35);
+            color: var(--gold); font-size: 11px; font-weight: 700;
+            padding: 3px 10px; border-radius: 20px; letter-spacing: .5px; text-transform: uppercase;
+        }
+        .top-bar-right { display: flex; align-items: center; gap: 10px; }
+        .btn-sm {
+            padding: 8px 16px; border-radius: 9px; font-family: inherit;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            border: 1px solid var(--input-border);
+            background: var(--input-bg); color: var(--text);
+            transition: all .2s;
+        }
+        .btn-sm:hover { border-color: var(--blue); color: var(--blue); }
+        .btn-sm.danger:hover { border-color: var(--red); color: var(--red); }
+        .btn-theme {
+            background: var(--input-bg); border: 1px solid var(--input-border);
+            border-radius: 9px; padding: 7px 11px; cursor: pointer;
+            font-size: 15px; color: var(--muted); transition: all .2s; line-height:1;
+        }
+        .btn-theme:hover { color: var(--text); border-color: var(--gold); }
+
+        /* Page content */
+        .page { max-width: 1200px; margin: 0 auto; padding: 32px 24px; width: 100%; }
+
+        .page-title { font-size: 24px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+        .page-sub   { font-size: 13.5px; color: var(--muted); margin-bottom: 28px; }
+
+        /* Stats row */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px; margin-bottom: 28px;
+        }
+        .stat-card {
+            background: var(--card); border: 1px solid var(--card-border);
+            border-radius: 14px; padding: 20px 22px;
+            backdrop-filter: blur(12px);
+            transition: transform .2s, box-shadow .2s;
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+        .stat-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .7px; color: var(--muted); margin-bottom: 8px; }
+        .stat-value { font-size: 32px; font-weight: 800; line-height: 1; }
+        .stat-sub   { font-size: 11.5px; color: var(--muted); margin-top: 6px; }
+        .c-blue   { color: var(--blue); }
+        .c-gold   { color: var(--gold); }
+        .c-green  { color: var(--green); }
+        .c-muted  { color: var(--muted); }
+
+        /* Search / filter bar */
+        .toolbar {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 16px; flex-wrap: wrap;
+        }
+        .search-wrap { position: relative; flex: 1; min-width: 200px; }
+        .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 15px; opacity: .4; pointer-events: none; }
+        .search-input {
+            width: 100%; background: var(--input-bg); border: 1.5px solid var(--input-border);
+            border-radius: 10px; color: var(--text); font-family: inherit; font-size: 14px;
+            padding: 10px 16px 10px 40px; outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .search-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(245,158,11,.12); }
+        .search-input::placeholder { color: var(--muted); opacity: .7; }
+        .filter-select {
+            background: var(--input-bg); border: 1.5px solid var(--input-border);
+            border-radius: 10px; color: var(--text); font-family: inherit; font-size: 13.5px;
+            padding: 10px 14px; outline: none; cursor: pointer;
+            transition: border-color .2s;
+        }
+        .filter-select:focus { border-color: var(--gold); }
+        .refresh-btn {
+            padding: 10px 16px; background: var(--input-bg); border: 1.5px solid var(--input-border);
+            border-radius: 10px; color: var(--muted); font-family: inherit; font-size: 13.5px;
+            cursor: pointer; display: flex; align-items: center; gap: 7px;
+            transition: all .2s;
+        }
+        .refresh-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+        /* Table card */
+        .table-card {
+            background: var(--card); border: 1px solid var(--card-border);
+            border-radius: 16px; overflow: hidden;
+            backdrop-filter: blur(12px);
+        }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        thead th {
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .7px; color: var(--muted);
+            padding: 14px 18px; text-align: left;
+            border-bottom: 1px solid var(--divider);
+            white-space: nowrap;
+        }
+        tbody tr {
+            border-bottom: 1px solid var(--divider);
+            transition: background .15s;
+        }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: var(--row-hover); }
+        tbody td {
+            padding: 14px 18px; font-size: 13.5px; color: var(--text);
+            vertical-align: middle;
+        }
+
+        /* User name cell */
+        .user-cell { display: flex; align-items: center; gap: 11px; }
+        .u-avatar {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: linear-gradient(135deg,#3b82f6,#6366f1);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px; color: #fff; flex-shrink: 0;
+        }
+        .u-avatar.admin { background: linear-gradient(135deg,#f59e0b,#d97706); box-shadow: 0 0 10px rgba(245,158,11,.4); }
+        .u-name { font-weight: 600; font-size: 13.5px; }
+        .u-email { font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+
+        /* Badges */
+        .badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 10px; border-radius: 20px;
+            font-size: 11px; font-weight: 700; letter-spacing: .3px; text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .badge-admin { background: rgba(245,158,11,.15); border: 1px solid rgba(245,158,11,.3); color: var(--gold); }
+        .badge-user  { background: rgba(59,130,246,.12); border: 1px solid rgba(59,130,246,.25); color: var(--blue); }
+        .badge-new   { background: rgba(34,197,94,.12);  border: 1px solid rgba(34,197,94,.25);  color: var(--green); }
+
+        /* Login count pill */
+        .login-pill {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 12px; color: var(--muted);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center; padding: 60px 20px; color: var(--muted);
+        }
+        .empty-state .emoji { font-size: 40px; margin-bottom: 12px; }
+        .empty-state p { font-size: 14px; }
+
+        /* Loading skeleton */
+        .skeleton { background: rgba(255,255,255,.06); border-radius: 6px; animation: pulse 1.5s ease-in-out infinite; }
+        @keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+        /* Toast */
+        #toast {
+            position: fixed; bottom: 26px; right: 26px; z-index: 9999;
+            background: #1a2744; border: 1px solid rgba(255,255,255,.1);
+            border-radius: 13px; padding: 13px 18px; font-size: 13.5px; color: #f1f5f9;
+            box-shadow: 0 8px 32px rgba(0,0,0,.4);
+            display: flex; align-items: center; gap: 10px; max-width: 340px;
+            transform: translateY(80px); opacity: 0;
+            transition: transform .35s cubic-bezier(0.16,1,0.3,1), opacity .3s ease;
+        }
+        #toast.show { transform: translateY(0); opacity: 1; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .page { padding: 20px 14px; }
+            .top-bar { padding: 12px 16px; }
+            thead th:nth-child(4), tbody td:nth-child(4),
+            thead th:nth-child(5), tbody td:nth-child(5) { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Toast -->
+<div id="toast"><span id="t-icon">✅</span><span id="t-msg"></span></div>
+
+<!-- Top Bar -->
+<div class="top-bar">
+    <div class="top-bar-left">
+        <div class="logo-wrap">
+            <div class="logo-icon">⭐</div>
+            <span class="logo-text">AERO<span>SENSE</span></span>
+        </div>
+        <span class="admin-badge">Admin Panel</span>
+    </div>
+    <div class="top-bar-right">
+        <button class="btn-theme" id="theme-btn" onclick="toggleTheme()">☀️</button>
+        <button class="btn-sm" onclick="window.location.href='index.html'">← Dashboard</button>
+        <button class="btn-sm danger" onclick="doLogout()">Sign Out</button>
+    </div>
+</div>
+
+<!-- Page content -->
+<div class="page">
+    <div class="page-title">User Management</div>
+    <div class="page-sub">View and manage all registered users on the platform</div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Total Users</div>
+            <div class="stat-value c-blue" id="stat-total">—</div>
+            <div class="stat-sub">Registered accounts</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Regular Users</div>
+            <div class="stat-value c-green" id="stat-regular">—</div>
+            <div class="stat-sub">Non-admin members</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Logins</div>
+            <div class="stat-value c-gold" id="stat-logins">—</div>
+            <div class="stat-sub">Combined login count</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Newest Member</div>
+            <div class="stat-value c-muted" id="stat-newest" style="font-size:16px;padding-top:6px">—</div>
+            <div class="stat-sub" id="stat-newest-date">—</div>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="search-input"
+                   placeholder="Search by username or email…"
+                   oninput="filterTable()">
+        </div>
+        <select class="filter-select" id="role-filter" onchange="filterTable()">
+            <option value="all">All Roles</option>
+            <option value="admin">Admin Only</option>
+            <option value="user">Users Only</option>
+        </select>
+        <button class="refresh-btn" onclick="loadUsers()">
+            <span id="refresh-icon">🔄</span> Refresh
+        </button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+        <div class="table-wrap">
+            <table id="users-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Joined</th>
+                        <th>Last Login</th>
+                        <th>Logins</th>
+                    </tr>
+                </thead>
+                <tbody id="users-tbody">
+                    <tr><td colspan="6"><div class="empty-state"><div class="emoji">⏳</div><p>Loading users…</p></div></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+// ── Theme ─────────────────────────────────────────────────────────────────────
+(function applyTheme() {
+    const t = localStorage.getItem('aerosense_theme');
+    if (t === 'light') {
+        document.documentElement.setAttribute('data-theme','light');
+        document.getElementById('theme-btn').textContent = '🌙';
+    }
+})();
+function toggleTheme() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight) {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('aerosense_theme','dark');
+        document.getElementById('theme-btn').textContent = '☀️';
+    } else {
+        document.documentElement.setAttribute('data-theme','light');
+        localStorage.setItem('aerosense_theme','light');
+        document.getElementById('theme-btn').textContent = '🌙';
+    }
+}
+
+// ── Auth guard ────────────────────────────────────────────────────────────────
+const token   = localStorage.getItem('aerosense_token');
+const isAdmin = localStorage.getItem('aerosense_is_admin') === 'true';
+if (!token)   { window.location.href = 'login.html'; }
+if (!isAdmin) { window.location.href = 'index.html'; }
+
+function doLogout() {
+    ['aerosense_token','aerosense_username','aerosense_is_admin','aerosense_remember'].forEach(k => localStorage.removeItem(k));
+    window.location.href = 'login.html';
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+let _tt;
+function showToast(msg, type='success') {
+    clearTimeout(_tt);
+    const el = document.getElementById('toast');
+    document.getElementById('t-icon').textContent = type === 'success' ? '✅' : '❌';
+    document.getElementById('t-msg').textContent  = msg;
+    el.className = 'show';
+    _tt = setTimeout(() => { el.className = ''; }, 4000);
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function fmtDate(str) {
+    if (!str) return '<span style="color:var(--muted)">—</span>';
+    try {
+        const d = new Date(str.replace(' ','T') + 'Z');
+        return d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+    } catch { return str; }
+}
+function fmtDateTime(str) {
+    if (!str) return '<span style="color:var(--muted)">Never</span>';
+    try {
+        const d = new Date(str.replace(' ','T') + 'Z');
+        const now = new Date();
+        const diff = Math.floor((now - d) / 1000);
+        if (diff < 60)   return 'Just now';
+        if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+        if (diff < 86400)return `${Math.floor(diff/3600)}h ago`;
+        return d.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+    } catch { return str; }
+}
+function isNew(str) {
+    if (!str) return false;
+    try {
+        const d = new Date(str.replace(' ','T') + 'Z');
+        return (Date.now() - d) < 7 * 86400 * 1000;
+    } catch { return false; }
+}
+
+// ── All users data ─────────────────────────────────────────────────────────────
+let allUsers = [];
+
+async function loadUsers() {
+    const icon = document.getElementById('refresh-icon');
+    icon.style.animation = 'spin 0.7s linear infinite';
+    icon.style.display = 'inline-block';
+
+    try {
+        const res  = await fetch('/api/admin/users', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (res.status === 403) {
+            showToast('Admin access required.', 'error');
+            setTimeout(() => window.location.href = 'index.html', 1500);
+            return;
+        }
+        if (!res.ok) throw new Error('Failed to load users');
+        const data = await res.json();
+        allUsers = data.users || [];
+        renderStats(allUsers);
+        filterTable();
+        showToast(`Loaded ${allUsers.length} user${allUsers.length !== 1 ? 's' : ''}`, 'success');
+    } catch (err) {
+        document.getElementById('users-tbody').innerHTML =
+            `<tr><td colspan="6"><div class="empty-state"><div class="emoji">❌</div><p>Failed to load users. Check your connection.</p></div></td></tr>`;
+        showToast('Could not load user list.', 'error');
+    } finally {
+        icon.style.animation = '';
+    }
+}
+
+function renderStats(users) {
+    const admins  = users.filter(u => u.is_admin);
+    const regulars = users.filter(u => !u.is_admin);
+    const totalLogins = users.reduce((s, u) => s + (u.login_count || 0), 0);
+    // Newest non-admin user
+    const newest = regulars.length > 0
+        ? [...regulars].sort((a,b) => new Date(b.created_at) - new Date(a.created_at))[0]
+        : null;
+
+    document.getElementById('stat-total').textContent   = users.length;
+    document.getElementById('stat-regular').textContent = regulars.length;
+    document.getElementById('stat-logins').textContent  = totalLogins;
+    document.getElementById('stat-newest').textContent  = newest ? newest.username : '—';
+    document.getElementById('stat-newest-date').textContent = newest ? `Joined ${fmtDate(newest.created_at)}` : 'No regular users yet';
+}
+
+function filterTable() {
+    const q    = (document.getElementById('search-input').value || '').toLowerCase();
+    const role = document.getElementById('role-filter').value;
+
+    let filtered = allUsers.filter(u => {
+        const matchQ    = !q || u.username.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
+        const matchRole = role === 'all'
+            || (role === 'admin' && u.is_admin)
+            || (role === 'user'  && !u.is_admin);
+        return matchQ && matchRole;
+    });
+
+    renderTable(filtered);
+}
+
+function renderTable(users) {
+    const tbody = document.getElementById('users-tbody');
+
+    if (users.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="emoji">🔍</div><p>No users match your filter.</p></div></td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = users.map((u, i) => {
+        const adminCls = u.is_admin ? 'admin' : '';
+        const initial  = u.username.charAt(0).toUpperCase();
+        const roleBadge = u.is_admin
+            ? `<span class="badge badge-admin">⭐ Admin</span>`
+            : `<span class="badge badge-user">👤 User</span>`;
+        const newBadge = isNew(u.created_at) && !u.is_admin
+            ? ` <span class="badge badge-new">✨ New</span>`
+            : '';
+        return `
+        <tr>
+            <td style="color:var(--muted);font-size:12px">${i+1}</td>
+            <td>
+                <div class="user-cell">
+                    <div class="u-avatar ${adminCls}">${initial}</div>
+                    <div>
+                        <div class="u-name">${escHtml(u.username)}</div>
+                        <div class="u-email">${escHtml(u.email)}</div>
+                    </div>
+                </div>
+            </td>
+            <td>${roleBadge}${newBadge}</td>
+            <td style="color:var(--muted);font-size:12.5px">${fmtDate(u.created_at)}</td>
+            <td style="font-size:12.5px">${fmtDateTime(u.last_login)}</td>
+            <td>
+                <span class="login-pill">
+                    <span style="font-weight:700;color:var(--text)">${u.login_count || 0}</span>
+                    <span>times</span>
+                </span>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Spin keyframe for refresh icon
+const s = document.createElement('style');
+s.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+document.head.appendChild(s);
+
+// Load on page ready
+loadUsers();
+</script>
+</body>
+</html>

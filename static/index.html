@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NASA Turbofan AI Monitor</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>🚀 AERO<span class="highlight">SENSE</span></h2>
+            </div>
+            <p class="project-desc">
+                AeroSense is a predictive maintenance platform for NASA turbofan jet engines.
+                It uses machine learning to forecast Remaining Useful Life (RUL) from real-time sensor telemetry,
+                leveraging SHAP-based explainability and a Gemini-powered AI assistant
+                to help engineers prevent failures before they happen.
+            </p>
+            <nav>
+                <button class="nav-btn active" onclick="switchTab('live', this)">📡 Live Monitor</button>
+                <button class="nav-btn" onclick="switchTab('history', this)">📂 History Analysis</button>
+                <button class="nav-btn" onclick="switchTab('chat-history', this)">💬 Chat History</button>
+                <button class="nav-btn" onclick="window.location.href='visualizations.html'">📊 Visualizations</button>
+                <button class="nav-btn admin-btn" id="admin-nav-btn" onclick="window.location.href='admin.html'">⭐ Admin Panel</button>
+            </nav>
+            <div class="status-panel">
+                <h3>System Status</h3>
+                <div id="connection-status" class="status-indicator offline">Disconnected</div>
+                <button id="sim-btn" onclick="toggleSimulation()">Start Simulation</button>
+            </div>
+
+            <!-- Theme Toggle -->
+            <div class="theme-toggle-wrapper">
+                <span class="theme-toggle-label">☀️ Light Mode</span>
+                <label class="theme-switch">
+                    <input type="checkbox" id="theme-toggle" onchange="toggleTheme()">
+                    <span class="theme-slider"></span>
+                </label>
+            </div>
+
+            <!-- User Info -->
+            <div class="user-panel">
+                <div class="user-avatar" id="user-avatar">?</div>
+                <div class="user-info">
+                    <div class="user-name" id="user-name">—</div>
+                    <div class="user-label">Logged in</div>
+                </div>
+                <button class="logout-btn" onclick="logout()" title="Logout">⏻</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+
+            <!-- LIVE TAB -->
+            <div id="live-tab" class="tab-content active">
+                <header>
+                    <h1>Engine Unit #001 Real-Time Telemetry</h1>
+                </header>
+
+                <div class="kpi-grid">
+                    <div class="card kpi">
+                        <h3>Predicted RUL</h3>
+                        <div class="value" id="rul-val">--</div>
+                        <small>Cycles Remaining</small>
+                    </div>
+                    <div class="card kpi">
+                        <h3>Health Index</h3>
+                        <div class="value" id="health-val">--%</div>
+                        <div class="progress-bar">
+                            <div id="health-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="card kpi">
+                        <h3>Condition</h3>
+                        <div class="value status-safe" id="status-val">Standby</div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="card chart-container">
+                        <h3>RUL Degradation Forecast</h3>
+                        <canvas id="rulChart"></canvas>
+                    </div>
+                    <div class="card chart-container">
+                        <h3>⚠️ Top Failure Drivers (SHAP Importance)</h3>
+                        <canvas id="featureChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card chat-section">
+                    <h3>🤖 AI Diagnostic Assistant (Gemini Powered)</h3>
+                    <div class="chat-window" id="chat-window">
+                        <div class="message system">System ready. Waiting for engine data...</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="user-input" placeholder="Ask e.g., 'What is the root cause of this drop?'">
+                        <button onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HISTORY FILE UPLOAD TAB -->
+            <div id="history-tab" class="tab-content">
+                <header>
+                    <h1>Historical Data Analysis</h1>
+                </header>
+
+                <div class="card upload-card">
+                    <h3>Upload Flight Data (CSV/TXT)</h3>
+                    <div class="upload-controls">
+                        <input type="file" id="csv-upload" accept=".csv, .txt">
+                        <button onclick="uploadFile()">Analyze Data</button>
+                    </div>
+                    <p id="upload-msg"></p>
+                </div>
+
+                <div class="card chart-container full-width" id="history-results" style="display:none;">
+                    <h3>Batch RUL Prediction Results</h3>
+                    <canvas id="historyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- CHAT HISTORY TAB -->
+            <div id="chat-history-tab" class="tab-content">
+                <header style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+                    <h1>💬 Chat History</h1>
+                    <button class="clear-btn" onclick="clearChatHistory()">🗑 Clear All</button>
+                </header>
+
+                <div class="card" style="padding: 0; overflow:hidden;">
+                    <div id="chat-history-list" class="chat-history-list">
+                        <div class="ch-empty">Loading your conversations…</div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Theme persistence
+        function toggleTheme() {
+            const isLight = document.getElementById('theme-toggle').checked;
+            document.documentElement.setAttribute('data-theme', isLight ? 'light' : 'dark');
+            localStorage.setItem('aerosense_theme', isLight ? 'light' : 'dark');
+        }
+        (function initTheme() {
+            const saved = localStorage.getItem('aerosense_theme');
+            if (saved === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                document.addEventListener('DOMContentLoaded', () => {
+                    const toggle = document.getElementById('theme-toggle');
+                    if (toggle) toggle.checked = true;
+                });
+            }
+        })();
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

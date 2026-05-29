@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   AEROSENSE — Sky Blue / White theme (default)
+   Switching to dark: Layout.jsx adds class "dark" to <html>
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── LIGHT MODE (default — sky blue / white) ─────────────────────────────── */
+:root {
+  --color-bg:      #e0f2fe;   /* sky-100 */
+  --color-card:    #ffffff;   /* pure white */
+  --color-card2:   #f0f9ff;   /* sky-50 */
+  --color-border:  #bae6fd;   /* sky-200 */
+  --color-text:    #0c1a2e;   /* dark navy */
+  --color-muted:   #64748b;   /* slate-500 */
+  --color-accent:  #0284c7;   /* sky-600 */
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-danger:  #dc2626;
+  --color-purple:  #7c3aed;
+  --shadow-card:   0 1px 8px rgba(2, 132, 199, 0.08);
+}
+
+/* ── DARK MODE — triggered when <html class="dark"> ─────────────────────── */
+.dark {
+  --color-bg:      #0f172a;
+  --color-card:    #1e293b;
+  --color-card2:   #273549;
+  --color-border:  #334155;
+  --color-text:    #e2e8f0;
+  --color-muted:   #94a3b8;
+  --color-accent:  #38bdf8;   /* sky-400 — bright in dark */
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger:  #ef4444;
+  --color-purple:  #a78bfa;
+  --shadow-card:   0 1px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { transition: background-color 0.3s ease, color 0.3s ease; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease;
+}
+
+/* ── Scrollbars ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--color-card2); }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 99px; }
+
+/* ── Markdown prose in chat ───────────────────────────────────────────────── */
+.prose p      { margin: 0 0 0.4em; line-height: 1.55; }
+.prose ul     { margin: 0.3em 0; padding-left: 1.2em; }
+.prose li     { margin: 0.15em 0; }
+.prose strong { color: var(--color-accent); font-weight: 700; }
+.prose code   {
+  background: var(--color-card2);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.82em;
+  color: var(--color-accent);
+}
+
+/* ── Smooth transitions on theme toggle ───────────────────────────────────── */
+.bg-card, .bg-card2, .border-border, .text-text, .text-muted {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}

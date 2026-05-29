@@ -1,0 +1,15 @@
+python 3.10.0 
+
+pip install -r requirements_updated.txt
+
+any errors do it manually with same versions 
+
+terminal 1 
+
+python -m uvicorn app:app --reload
+
+terminal 2 
+
+npm install 
+
+npm run dev 
