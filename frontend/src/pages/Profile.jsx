@@ -27,13 +27,18 @@ export default function Profile() {
   const picture = localStorage.getItem('user_picture');
   const name    = localStorage.getItem('user_name');
 
+  // SQLite stores UTC as "YYYY-MM-DD HH:MM:SS" (no timezone marker).
+  // Appending 'Z' after replacing the space ensures JS parses it as UTC
+  // and toLocaleString() converts it to the user's local timezone correctly.
+  const toUTC = (s) => s ? new Date(s.replace(' ', 'T') + 'Z') : null;
+
   const fields = [
     { Icon: User,     label: 'Username',     value: user.username },
     { Icon: Mail,     label: 'Email',        value: user.email || '—' },
     { Icon: Shield,   label: 'Role',         value: user.is_admin ? 'Administrator' : 'Standard User' },
     { Icon: Clock,    label: 'Login Count',  value: `${user.login_count ?? 0} session${user.login_count !== 1 ? 's' : ''}` },
-    { Icon: Calendar, label: 'Member Since', value: user.member_since ? new Date(user.member_since).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) : '—' },
-    { Icon: Clock,    label: 'Last Login',   value: user.last_login   ? new Date(user.last_login).toLocaleString('en-US',   { year:'numeric', month:'short',  day:'numeric', hour:'2-digit', minute:'2-digit' }) : '—' },
+    { Icon: Calendar, label: 'Member Since', value: toUTC(user.member_since)?.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) ?? '—' },
+    { Icon: Clock,    label: 'Last Login',   value: toUTC(user.last_login)?.toLocaleString('en-US', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) ?? '—' },
   ];
 
   return (
