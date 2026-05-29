@@ -41,7 +41,7 @@ except ImportError:
     print("google-auth not installed. Run: pip install google-auth")
 
 # ── GEMINI ────────────────────────────────────────────────────────────────────
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyDfc_QuBiBKBzDrhTQ_72Oeb213_M2WFq8")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "YOUR_GEMINI_API_KEY_HERE")
 try:
     from google import genai as google_genai
     from google.genai import types as genai_types
