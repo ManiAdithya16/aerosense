@@ -527,12 +527,16 @@ export default function Dashboard() {
   const [compHealth,  setCompHealth]  = useState({ components: [], overall: null });
   const lastFetchCycle = useRef(-1);
 
-  const [messages, setMessages] = useState([{
-    role: 'ai',
-    content: '**AEROSENSE Online.** I have full access to live sensor telemetry, SHAP risk factors, health trend, anomaly data, flight conditions, alerts, and maintenance schedule. Ask anything.',
-  }]);
-  const [input,    setInput]    = useState('');
-  const [chatBusy, setChatBusy] = useState(false);
+  const INITIAL_MSG = { role: 'ai', content: '**AEROSENSE Online.** I have full access to live sensor telemetry, SHAP risk factors, health trend, anomaly data, flight conditions, alerts, and maintenance schedule. Ask anything.' };
+  const [messages, setMessages] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('aerosense_chat');
+      return saved ? JSON.parse(saved) : [INITIAL_MSG];
+    } catch { return [INITIAL_MSG]; }
+  });
+  const [input,     setInput]     = useState('');
+  const [chatBusy,  setChatBusy]  = useState(false);
+  const [copiedIdx, setCopiedIdx] = useState(null);
 
   const messagesRef  = useRef(null);
   const wsRef        = useRef(null);
@@ -627,6 +631,11 @@ export default function Dashboard() {
       return () => clearTimeout(t);
     }
   }, []);
+
+  // Persist chat history across page navigation
+  useEffect(() => {
+    try { sessionStorage.setItem('aerosense_chat', JSON.stringify(messages)); } catch {}
+  }, [messages]);
 
   // Scroll chat to bottom on new messages (only scrolls the messages container)
   useEffect(() => {
@@ -803,9 +812,15 @@ export default function Dashboard() {
                     <div className="prose prose-xs max-w-none" style={{ color: 'var(--color-text)' }}>
                       <ReactMarkdown>{msg.content}</ReactMarkdown>
                     </div>
-                    <button onClick={() => navigator.clipboard?.writeText(msg.content)}
+                    <button onClick={async () => {
+                              try {
+                                await navigator.clipboard.writeText(msg.content);
+                                setCopiedIdx(i);
+                                setTimeout(() => setCopiedIdx(null), 1500);
+                              } catch {}
+                            }}
                             className="mt-1.5 flex items-center gap-1 text-[8px] text-muted hover:text-sky-500 transition-colors">
-                      <Copy size={8}/> Copy
+                      <Copy size={8}/> {copiedIdx === i ? 'Copied!' : 'Copy'}
                     </button>
                     {msg.followups?.length > 0 && (
                       <div className="mt-2 pt-2 border-t border-border flex flex-col gap-1">
