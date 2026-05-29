@@ -30,7 +30,6 @@ best_rul_model_v2.ubj
 
 # Frontend
 frontend/node_modules/
-frontend/dist/
 frontend/.env
 
 # Misc
